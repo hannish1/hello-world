@@ -3,8 +3,8 @@ form action="action_page.php">
     <h1>New user Register for DevOps Learning</h1>
     <p>Please fill in this form to create an account.</p>
     <hr>
-     
-    <label for="Name"><b>Name</b></label>
+    
+    <label for="Name"><b>FullName</b></label>
     <input type="text" placeholder="Enter Full Name" name="Name" id="Name" required>
     <br>   
 
