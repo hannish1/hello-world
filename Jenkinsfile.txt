@@ -1,0 +1,53 @@
+pipeline {
+   agent any
+   environment{
+       
+       PATH = "/opt/maven/bin/m:$PATH"
+       
+       BACKUP_DIR = "/var/lib/jenkins/workspace/backup"
+	   
+	   TOMCAT_HOME = "/opt/tomcat"
+    }
+    
+    stages {
+        
+        stage('clone') {
+			steps {
+        
+			// The below will clone your repo and will be checked out to master branch by default.
+				git credentialsId: 'jenkins-user-github', url: 'https://github.com/hannish1/hello-world.git'
+			}
+      
+		}
+	   
+        stage('build code') {
+            steps {
+                sh "mvn clean install"
+            }
+      
+        }
+	   
+	    stage('Backup Code') {
+            steps {
+                script {
+                    // Create the backup directory if it doesn't exist
+                    sh "mkdir -p ${BACKUP_DIR}"
+                    
+                    // Copy the code to the backup directory
+                    sh "cp -r /var/lib/jenkins/workspace/NEWJAVAPIPELINE/webapp/target/webapp.war* ${BACKUP_DIR}"
+                }
+             }
+        }
+		
+		stage('Deploy to Tomcat') {
+            steps {
+                // Copy the built artifact (e.g., WAR file) to Tomcat's webapps directory
+                deploy adapters: [tomcat9(credentialsId: '6957defe-a293-48ba-982d-07af8ed9ec0d', path: '', url: 'http://192.168.1.183:8081/')], contextPath: null, war: '**/*.war'
+               
+         
+            }
+        }
+		
+    
+    }
+}
